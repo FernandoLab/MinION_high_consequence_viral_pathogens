@@ -1,0 +1,31 @@
+#######concatonate fastq files into one file########
+
+cat *.fastq >> file.fastq
+
+
+
+#######remove adaptors########
+#information can be found from https://github.com/rrwick/Porechop
+
+porechop-runner.py -i file.fastq > file_trim.fastq
+
+
+
+#######align reads to Centrifuge reference database########
+
+module load anaconda
+conda activate centrifuge
+module load blast/2.10
+
+#fastq to fasta file
+seqtk seq -a file_trim.fastq >  file_trim.fa
+
+
+centrifuge-class -p 4 -f -x file_trim.fa   -S output_file
+
+centrifuge-kreport -x new_all output_file > kreport_file
+
+
+#######visualize data in Pavian########
+
+https://fbreitwieser.shinyapps.io/pavian/
