@@ -1,0 +1,17 @@
+#######making reference database########
+
+#information on Centrifuge tool can be found here https://ccb.jhu.edu/software/centrifuge/ and https://github.com/DaehwanKimLab/centrifuge
+
+module load blast/2.10
+module load anaconda
+conda activate centrifuge
+
+#download all archaea, bacteria and viruses from NCBI
+centrifuge-download -o library -m -d "archaea,bacteria,viral" refseq > seqid2taxid.map
+
+#to download swine and cattle genomes from NCBI
+centrifuge-download -o library -d "vertebrate_mammalian" -a "Chromosome" -t 9823 refseq >> seqid2taxid.map
+centrifuge-download -o library -d "vertebrate_mammalian" -a "Chromosome" -t 9913 refseq >> seqid2taxid.map
+
+#building the reference database
+centrifuge-build -p 16 --conversion-table seqid2taxid_all.map --taxonomy-tree taxonomy/nodes.dmp --name-table taxonomy/names.dmp all_new.fna new_all
